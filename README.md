@@ -1,7 +1,7 @@
 html5-lint
 ==========
 
-HTML Validation using Mozilla's HTML5 Validator instance.  This is a modified Python file for using the Mozilla Labs' HTML Validator Web Service, located at https://validator.mozillalabs.com/.  It was setup in order to be used in the build system of various Mozilla projects, without spamming the main validator (i.e., http://validator.nu)--see https://bugzilla.mozilla.org/show_bug.cgi?id=763804.  You can read more about the validator at https://validator.mozillalabs.com/.
+HTML Validation using Mozilla's HTML5 Validator instance.  This is a modified Python file for using the Mozilla Labs' HTML Validator Web Service, located at https://validator.mozillalabs.com/.  It was setup in order to be used in the build system of various Mozilla projects, without spamming the main validator (i.e., http://validator.nu) --see https://bugzilla.mozilla.org/show_bug.cgi?id=763804.  You can read more about the validator at https://validator.mozillalabs.com/.
 
 You can and should use it in your own Mozilla project's build system in order to automatically check your HTML for errors.
 
