@@ -1,0 +1,24 @@
+{
+  "name": "html5-lint",
+  "version": "0.2.0",
+  "description": "HTML Validation using Mozilla's HTML5 Validator instance",
+  "main": "html5-lint.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mozilla/html5-lint.git"
+  },
+  "keywords": [
+    "html5",
+    "lint"
+  ],
+  "contributors": [
+    "David Humphrey <david.humphrey@senecacollege.ca>",
+    "Jon Buckley <jon@jbuckley.ca>"
+  ],
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "extend": "~1.1.3",
+    "request": "~2.12.0"
+  }
+}
