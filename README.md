@@ -1,11 +1,39 @@
-html5-lint
+html5-lint - HTML Validation using Mozilla's HTML5 Validator instance
 ==========
 
-HTML Validation using Mozilla's HTML5 Validator instance.  This is a modified Python file for using the Mozilla Labs' HTML Validator Web Service, located at https://validator.mozillalabs.com/.  It was setup in order to be used in the build system of various Mozilla projects, without spamming the main validator (i.e., http://validator.nu) --see https://bugzilla.mozilla.org/show_bug.cgi?id=763804.  You can read more about the validator at https://validator.mozillalabs.com/.
+This is a node.js and Python front-end to the Mozilla Labs' HTML Validator Web Service, located at https://validator.mozillalabs.com/.  It was setup in order to be used in the build system of various Mozilla projects, without spamming the main validator (i.e., http://validator.nu) --see https://bugzilla.mozilla.org/show_bug.cgi?id=763804.  You can read more about the validator at https://validator.mozillalabs.com/.
 
 You can and should use it in your own Mozilla project's build system in order to automatically check your HTML for errors.
 
-Usage
+Usage - node.js
+-------
+
+The `html5-lint` module can be installed via npm:
+
+`$ npm install html5-lint`
+
+Once installed, it can be used like so:
+
+```javascript
+var fs = require( 'fs' ),
+    html5Lint = require( 'html5-lint' );
+
+fs.readFile( 'index.html', 'utf8', function( err, html ) {
+  if ( err )
+    throw err;
+
+  html5Lint( html, function( err, results ) {
+    results.messages.forEach( function( msg ) {
+      var type = msg.type, // error or warning
+          message = msg.message;
+
+      console.log( "HTML5 Lint [%s]: %s", type, message );
+    });
+  });
+});
+````
+
+Usage - Python
 -------
 
 `html5check.py -h file.html`
@@ -18,20 +46,8 @@ The document is valid HTML5 + ARIA + SVG 1.1 + MathML 2.0 (subject to the utter 
 ```
 
 ```bash
-$ ./html5check.py bad.html 
-Error: Start tag seen without seeing a doctype first. Expected “<!DOCTYPE html>”.
-From line 1, column 1; to line 1, column 6
-
-Error: Element “head” is missing a required instance of child element “title”.
-From line 3, column 3; to line 3, column 9
-
-Error: An “body” start tag seen but an element of the same type was already open.
-From line 5, column 3; to line 5, column 8
-
-Warning: The character encoding of the document was not declared.
-
-There were errors. (Tried in the text/html mode.)
-$ ./html5check.py -h good.html
+$ ./html5check.py bad.html
+Error: Start tag seen without seeing a doctype first. Expected
 ```
 
 Options
@@ -47,5 +63,4 @@ Options
 TODO
 --------
 
-* node.js client to go with python
 * error/warning filtering based on types, categories of errors/warnings
