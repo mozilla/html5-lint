@@ -37,6 +37,7 @@ const defaults = {
 };
 
 var extend = require("extend"),
+    http = require("http"),
     request = require("request");
 
 var Lint = function Lint(input, options, callback) {
@@ -79,8 +80,18 @@ var Lint = function Lint(input, options, callback) {
       return;
     }
 
+    if (res.statusCode !== 200) {
+      var httpError = new Error(http.STATUS_CODES[res.statusCode]);
+      httpError.status = res.statusCode;
+      return callback(httpError);
+    }
+
     if (options.output === "json") {
-      body = JSON.parse(body);
+      try {
+        body = JSON.parse(body);
+      } catch (parseError) {
+        return callback(parseError);
+      }
     }
 
     callback(null, body);
