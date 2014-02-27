@@ -67,7 +67,7 @@ encoding = None
 fileName = None
 contentType = None
 inputHandle = None
-service = 'https://validator.mozillalabs.com/'
+service = 'http://html5.validator.nu/'
 
 for arg in argv:
   if '--help' == arg:
