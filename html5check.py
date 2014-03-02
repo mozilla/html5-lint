@@ -171,7 +171,10 @@ while (status == 302 or status == 301 or status == 307) and redirectCount < 10:
     print('Please press enter to continue or type "stop" followed by enter to stop.')
     if raw_input() != "":
       sys.exit(0)
-  connection = httplib.HTTPSConnection(parsed[1])
+  if parsed.scheme == "https":
+    connection = httplib.HTTPSConnection(parsed[1])
+  else:
+    connection = httplib.HTTPConnection(parsed[1])
   connection.connect()
   connection.putrequest("POST", "%s?%s" % (parsed[2], parsed[3]), skip_accept_encoding=1)
   connection.putheader("Accept-Encoding", 'gzip')
