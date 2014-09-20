@@ -50,11 +50,11 @@ except:
 
 extPat = re.compile(r'^.*\.([A-Za-z]+)$')
 extDict = {
-  "html" : "text/html",
-  "htm" : "text/html",
-  "xhtml" : "application/xhtml+xml",
-  "xht" : "application/xhtml+xml",
-  "xml" : "application/xml",
+  'html' : 'text/html',
+  'htm' : 'text/html',
+  'xhtml' : 'application/xhtml+xml',
+  'xht' : 'application/xhtml+xml',
+  'xml' : 'application/xml',
 }
 
 argv = sys.argv[1:]
@@ -79,14 +79,14 @@ for arg in argv:
     print('--service=url  : the address of the HTML5 validator')
     print('One file argument allowed. Leave out to read from stdin.')
     sys.exit(0)
-  elif arg.startswith("--encoding="):
+  elif arg.startswith('--encoding='):
     encoding = arg[11:]
-  elif arg.startswith("--service="):
+  elif arg.startswith('--service='):
     service = arg[10:]
-  elif arg.startswith("--"):
+  elif arg.startswith('--'):
       sys.stderr.write('Unknown argument %s.\n' % arg)
       sys.exit(2)
-  elif arg.startswith("-"):
+  elif arg.startswith('-'):
     for c in arg[1:]:
       if 'x' == c:
         forceXml = 1
@@ -134,7 +134,7 @@ if encoding:
   contentType = '%s; charset=%s' % (contentType, encoding)
 
 if fileName:
-  inputHandle = open(fileName, "rb")
+  inputHandle = open(fileName, 'rb')
 else:
   inputHandle = sys.stdin
 
@@ -168,19 +168,19 @@ while (status == 302 or status == 301 or status == 307) and redirectCount < 10:
   if redirectCount > 0:
     connection.close() # previous connection
     print('Redirecting to %s' % url)
-    print('Please press enter to continue or type "stop" followed by enter to stop.')
-    if raw_input() != "":
+    print('Please press enter to continue or type \'stop\' followed by enter to stop.')
+    if raw_input() != '':
       sys.exit(0)
-  if parsed.scheme == "https":
+  if parsed.scheme == 'https':
     connection = httplib.HTTPSConnection(parsed[1])
   else:
     connection = httplib.HTTPConnection(parsed[1])
   connection.connect()
-  connection.putrequest("POST", "%s?%s" % (parsed[2], parsed[3]), skip_accept_encoding=1)
-  connection.putheader("Accept-Encoding", 'gzip')
-  connection.putheader("Content-Type", contentType)
-  connection.putheader("Content-Encoding", 'gzip')
-  connection.putheader("Content-Length", len(gzippeddata))
+  connection.putrequest('POST', '%s?%s' % (parsed[2], parsed[3]), skip_accept_encoding=1)
+  connection.putheader('Accept-Encoding', 'gzip')
+  connection.putheader('Content-Type', contentType)
+  connection.putheader('Content-Encoding', 'gzip')
+  connection.putheader('Content-Length', len(gzippeddata))
   connection.endheaders()
   connection.send(gzippeddata)
   response = connection.getresponse()
@@ -195,7 +195,7 @@ if response.getheader('Content-Encoding', 'identity').lower() == 'gzip':
   response = gzip.GzipFile(fileobj=BytesIO(response.read()))
   
 if fileName and gnu:
-  quotedName = '"%s"' % fileName.replace('"', '\\042')
+  quotedName = '"%s"' % fileName.replace("'", '\\042')
   for line in response:
     sys.stdout.write(quotedName)
     sys.stdout.write(line)
