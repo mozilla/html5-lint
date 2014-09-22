@@ -21,6 +21,8 @@
 # DEALINGS IN THE SOFTWARE.
 
 # Several "try" blocks for python2/3 differences (@secretrobotron)
+from __future__ import print_function, with_statement
+
 try:
   import httplib
 except:
