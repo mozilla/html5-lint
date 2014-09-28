@@ -61,10 +61,10 @@ extDict = {
 
 argv = sys.argv[1:]
 
-forceXml = 0
-forceHtml = 0
-gnu = 0
-errorsOnly = 0
+forceXml = False
+forceHtml = False
+gnu = False
+errorsOnly = False
 encoding = None
 fileName = None
 contentType = None
@@ -91,13 +91,13 @@ for arg in argv:
   elif arg.startswith('-'):
     for c in arg[1:]:
       if 'x' == c:
-        forceXml = 1
+        forceXml = True
       elif 'h' == c:
-        forceHtml = 1
+        forceHtml = True
       elif 'g' == c:
-        gnu = 1  		
+        gnu = True
       elif 'e' == c:
-        errorsOnly = 1
+        errorsOnly = True
       else:
         sys.stderr.write('Unknown argument %s.\n' % arg)
         sys.exit(3)        		
