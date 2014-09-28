@@ -106,11 +106,17 @@ for arg in argv:
       sys.stderr.write('Cannot have more than one input file.\n')
       sys.exit(1)
     fileName = arg
-    
+
+#
+# Ensure a maximum of one forced output type
+#
 if forceXml and forceHtml:
   sys.stderr.write('Cannot force HTML and XHTML at the same time.\n')
   sys.exit(2)
-  
+
+#
+# Set contentType
+#
 if forceXml:
   contentType = 'application/xhtml+xml'
 elif forceHtml:
@@ -135,6 +141,9 @@ else:
 if encoding:
   contentType = '%s; charset=%s' % (contentType, encoding)
 
+#
+# Read the file argument (or STDIN)
+#
 if fileName:
   inputHandle = open(fileName, 'rb')
 else:
@@ -154,6 +163,9 @@ response = None
 status = 302
 redirectCount = 0
 
+#
+# Prepare the request
+#
 url = service
 if gnu:
   url = url + '?out=gnu'
@@ -163,6 +175,9 @@ else:
 if errorsOnly:
   url = url + '&level=error'
 
+#
+# Make the request
+#
 while (status == 302 or status == 301 or status == 307) and redirectCount < 10:
   if redirectCount > 0:
     url = response.getheader('Location')
@@ -189,6 +204,9 @@ while (status == 302 or status == 301 or status == 307) and redirectCount < 10:
   status = response.status
   redirectCount += 1
 
+#
+# Handle the response
+#
 if status != 200:
   sys.stderr.write('%s %s\n' % (status, response.reason))
   sys.exit(5)
