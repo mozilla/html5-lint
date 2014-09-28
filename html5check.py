@@ -25,7 +25,7 @@ from __future__ import print_function, with_statement
 
 try:
   import httplib
-except:
+except ImportError:
   import http.client as httplib
 
 import os
@@ -34,7 +34,7 @@ import re
 
 try:
   import urlparse
-except:
+except ImportError:
   import urllib.parse as urlparse
 
 import string
@@ -42,12 +42,12 @@ import gzip
 
 try:
   from BytesIO import BytesIO
-except:
+except ImportError:
   from io import BytesIO
 
 try:
   maketrans = str.maketrans
-except:
+except AttributeError:
   maketrans = string.maketrans
 
 extPat = re.compile(r'^.*\.([A-Za-z]+)$')
