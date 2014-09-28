@@ -20,25 +20,24 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 # DEALINGS IN THE SOFTWARE.
 
-# Several "try" blocks for python2/3 differences (@secretrobotron)
 from __future__ import print_function, with_statement
 
+import os
+import sys
+import re
+import string
+import gzip
+
+# Several "try" blocks for python2/3 differences (@secretrobotron)
 try:
   import httplib
 except ImportError:
   import http.client as httplib
 
-import os
-import sys
-import re
-
 try:
   import urlparse
 except ImportError:
   import urllib.parse as urlparse
-
-import string
-import gzip
 
 try:
   from BytesIO import BytesIO
@@ -50,6 +49,9 @@ try:
 except AttributeError:
   maketrans = string.maketrans
 
+#
+# Begin
+#
 extPat = re.compile(r'^.*\.([A-Za-z]+)$')
 extDict = {
   'html' : 'text/html',
@@ -58,8 +60,6 @@ extDict = {
   'xht' : 'application/xhtml+xml',
   'xml' : 'application/xml',
 }
-
-argv = sys.argv[1:]
 
 forceXml = False
 forceHtml = False
@@ -71,6 +71,11 @@ contentType = None
 inputHandle = None
 service = 'http://html5.validator.nu/'
 
+argv = sys.argv[1:]
+
+#
+# Parse command line input
+#
 for arg in argv:
   if '--help' == arg:
     print('-h : force text/html')
