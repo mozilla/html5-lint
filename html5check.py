@@ -145,19 +145,16 @@ if encoding:
 # Read the file argument (or STDIN)
 #
 if fileName:
-  inputHandle = open(fileName, 'rb')
+  inputHandle = fileName
 else:
   inputHandle = sys.stdin
 
-data = inputHandle.read()
-
-buf = BytesIO()
-gzipper = gzip.GzipFile(fileobj=buf, mode='wb')
-gzipper.write(data)
-gzipper.close()
-gzippeddata = buf.getvalue()
-buf.close()
-
+with open(inputHandle, mode='rb') as inFile:
+  data = inFile.read()
+  with BytesIO() as buf:
+    with gzip.GzipFile(fileobj=buf, mode='wb') as zipFile:
+      zipFile.write(data)
+    gzippeddata = buf.getvalue()
 
 #
 # Prepare the request
