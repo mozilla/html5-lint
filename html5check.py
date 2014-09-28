@@ -160,6 +160,7 @@ with open(inputHandle, mode='rb') as inFile:
 # Prepare the request
 #
 url = service
+
 if gnu:
   url = url + '?out=gnu'
 else:
@@ -180,26 +181,33 @@ while (status == 302 or status == 301 or status == 307) and redirectCount < 10:
   if redirectCount > 0:
     url = response.getheader('Location')
   parsed = urlparse.urlsplit(url)
+  
   if redirectCount > 0:
     connection.close() # previous connection
     print('Redirecting to %s' % url)
     print('Please press enter to continue or type \'stop\' followed by enter to stop.')
     if raw_input() != '':
       sys.exit(0)
+  
   if parsed.scheme == 'https':
     connection = httplib.HTTPSConnection(parsed[1])
   else:
     connection = httplib.HTTPConnection(parsed[1])
+  
+  headers = {
+    'Accept-Encoding': 'gzip',
+    'Content-Type': contentType,
+    'Content-Encoding': 'gzip',
+    'Content-Length': len(gzippeddata),
+  }
+  urlSuffix = '%s?%s' % (parsed[2], parsed[3])
+  
   connection.connect()
-  connection.putrequest('POST', '%s?%s' % (parsed[2], parsed[3]), skip_accept_encoding=1)
-  connection.putheader('Accept-Encoding', 'gzip')
-  connection.putheader('Content-Type', contentType)
-  connection.putheader('Content-Encoding', 'gzip')
-  connection.putheader('Content-Length', len(gzippeddata))
-  connection.endheaders()
-  connection.send(gzippeddata)
+  connection.request('POST', urlSuffix, body=gzippeddata, headers=headers)
+  
   response = connection.getresponse()
   status = response.status
+  
   redirectCount += 1
 
 #
