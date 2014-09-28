@@ -158,10 +158,6 @@ gzipper.close()
 gzippeddata = buf.getvalue()
 buf.close()
 
-connection = None
-response = None
-status = 302
-redirectCount = 0
 
 #
 # Prepare the request
@@ -174,6 +170,11 @@ else:
   
 if errorsOnly:
   url = url + '&level=error'
+
+connection = None
+response = None
+status = 302
+redirectCount = 0
 
 #
 # Make the request
