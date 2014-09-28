@@ -152,8 +152,10 @@ else:
 with open(inputHandle, mode='rb') as inFile:
   data = inFile.read()
   with BytesIO() as buf:
-    with gzip.GzipFile(fileobj=buf, mode='wb') as zipFile:
-      zipFile.write(data)
+    # we could use another with block here, but it requires Python 2.7+
+    zipFile = gzip.GzipFile(fileobj=buf, mode='wb')
+    zipFile.write(data)
+    zipFile.close()
     gzippeddata = buf.getvalue()
 
 #
