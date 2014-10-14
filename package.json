@@ -1,6 +1,6 @@
 {
   "name": "html5-lint",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "HTML Validation using Mozilla's HTML5 Validator instance",
   "main": "html5-lint.js",
   "repository": {
