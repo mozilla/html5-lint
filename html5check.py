@@ -20,55 +20,62 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 # DEALINGS IN THE SOFTWARE.
 
-# Several "try" blocks for python2/3 differences (@secretrobotron)
-try:
-  import httplib
-except:
-  import http.client as httplib
+from __future__ import print_function, with_statement
 
 import os
 import sys
 import re
-
-try:
-  import urlparse
-except:
-  import urllib.parse as urlparse
-
 import string
 import gzip
 
+# Several "try" blocks for python2/3 differences (@secretrobotron)
+try:
+  import httplib
+except ImportError:
+  import http.client as httplib
+
+try:
+  import urlparse
+except ImportError:
+  import urllib.parse as urlparse
+
 try:
   from BytesIO import BytesIO
-except:
+except ImportError:
   from io import BytesIO
 
 try:
   maketrans = str.maketrans
-except:
+except AttributeError:
   maketrans = string.maketrans
 
+#
+# Begin
+#
 extPat = re.compile(r'^.*\.([A-Za-z]+)$')
 extDict = {
-  "html" : "text/html",
-  "htm" : "text/html",
-  "xhtml" : "application/xhtml+xml",
-  "xht" : "application/xhtml+xml",
-  "xml" : "application/xml",
+  'html' : 'text/html',
+  'htm' : 'text/html',
+  'xhtml' : 'application/xhtml+xml',
+  'xht' : 'application/xhtml+xml',
+  'xml' : 'application/xml',
 }
 
-argv = sys.argv[1:]
-
-forceXml = 0
-forceHtml = 0
-gnu = 0
-errorsOnly = 0
+forceXml = False
+forceHtml = False
+gnu = False
+errorsOnly = False
 encoding = None
 fileName = None
 contentType = None
 inputHandle = None
 service = 'http://html5.validator.nu/'
 
+argv = sys.argv[1:]
+
+#
+# Parse command line input
+#
 for arg in argv:
   if '--help' == arg:
     print('-h : force text/html')
@@ -79,23 +86,23 @@ for arg in argv:
     print('--service=url  : the address of the HTML5 validator')
     print('One file argument allowed. Leave out to read from stdin.')
     sys.exit(0)
-  elif arg.startswith("--encoding="):
+  elif arg.startswith('--encoding='):
     encoding = arg[11:]
-  elif arg.startswith("--service="):
+  elif arg.startswith('--service='):
     service = arg[10:]
-  elif arg.startswith("--"):
+  elif arg.startswith('--'):
       sys.stderr.write('Unknown argument %s.\n' % arg)
       sys.exit(2)
-  elif arg.startswith("-"):
+  elif arg.startswith('-'):
     for c in arg[1:]:
       if 'x' == c:
-        forceXml = 1
+        forceXml = True
       elif 'h' == c:
-        forceHtml = 1
+        forceHtml = True
       elif 'g' == c:
-        gnu = 1  		
+        gnu = True
       elif 'e' == c:
-        errorsOnly = 1
+        errorsOnly = True
       else:
         sys.stderr.write('Unknown argument %s.\n' % arg)
         sys.exit(3)        		
@@ -104,11 +111,17 @@ for arg in argv:
       sys.stderr.write('Cannot have more than one input file.\n')
       sys.exit(1)
     fileName = arg
-    
+
+#
+# Ensure a maximum of one forced output type
+#
 if forceXml and forceHtml:
   sys.stderr.write('Cannot force HTML and XHTML at the same time.\n')
   sys.exit(2)
-  
+
+#
+# Set contentType
+#
 if forceXml:
   contentType = 'application/xhtml+xml'
 elif forceHtml:
@@ -133,26 +146,28 @@ else:
 if encoding:
   contentType = '%s; charset=%s' % (contentType, encoding)
 
+#
+# Read the file argument (or STDIN)
+#
 if fileName:
-  inputHandle = open(fileName, "rb")
+  inputHandle = fileName
 else:
   inputHandle = sys.stdin
 
-data = inputHandle.read()
+with open(inputHandle, mode='rb') as inFile:
+  data = inFile.read()
+  with BytesIO() as buf:
+    # we could use another with block here, but it requires Python 2.7+
+    zipFile = gzip.GzipFile(fileobj=buf, mode='wb')
+    zipFile.write(data)
+    zipFile.close()
+    gzippeddata = buf.getvalue()
 
-buf = BytesIO()
-gzipper = gzip.GzipFile(fileobj=buf, mode='wb')
-gzipper.write(data)
-gzipper.close()
-gzippeddata = buf.getvalue()
-buf.close()
-
-connection = None
-response = None
-status = 302
-redirectCount = 0
-
+#
+# Prepare the request
+#
 url = service
+
 if gnu:
   url = url + '?out=gnu'
 else:
@@ -161,32 +176,50 @@ else:
 if errorsOnly:
   url = url + '&level=error'
 
-while (status == 302 or status == 301 or status == 307) and redirectCount < 10:
+connection = None
+response = None
+status = 302
+redirectCount = 0
+
+#
+# Make the request
+#
+while status in (302,301,307) and redirectCount < 10:
   if redirectCount > 0:
     url = response.getheader('Location')
   parsed = urlparse.urlsplit(url)
+  
   if redirectCount > 0:
     connection.close() # previous connection
     print('Redirecting to %s' % url)
-    print('Please press enter to continue or type "stop" followed by enter to stop.')
-    if raw_input() != "":
+    print('Please press enter to continue or type \'stop\' followed by enter to stop.')
+    if raw_input() != '':
       sys.exit(0)
-  if parsed.scheme == "https":
+  
+  if parsed.scheme == 'https':
     connection = httplib.HTTPSConnection(parsed[1])
   else:
     connection = httplib.HTTPConnection(parsed[1])
+  
+  headers = {
+    'Accept-Encoding': 'gzip',
+    'Content-Type': contentType,
+    'Content-Encoding': 'gzip',
+    'Content-Length': len(gzippeddata),
+  }
+  urlSuffix = '%s?%s' % (parsed[2], parsed[3])
+  
   connection.connect()
-  connection.putrequest("POST", "%s?%s" % (parsed[2], parsed[3]), skip_accept_encoding=1)
-  connection.putheader("Accept-Encoding", 'gzip')
-  connection.putheader("Content-Type", contentType)
-  connection.putheader("Content-Encoding", 'gzip')
-  connection.putheader("Content-Length", len(gzippeddata))
-  connection.endheaders()
-  connection.send(gzippeddata)
+  connection.request('POST', urlSuffix, body=gzippeddata, headers=headers)
+  
   response = connection.getresponse()
   status = response.status
+  
   redirectCount += 1
 
+#
+# Handle the response
+#
 if status != 200:
   sys.stderr.write('%s %s\n' % (status, response.reason))
   sys.exit(5)
@@ -195,7 +228,7 @@ if response.getheader('Content-Encoding', 'identity').lower() == 'gzip':
   response = gzip.GzipFile(fileobj=BytesIO(response.read()))
   
 if fileName and gnu:
-  quotedName = '"%s"' % fileName.replace('"', '\\042')
+  quotedName = '"%s"' % fileName.replace("'", '\\042')
   for line in response:
     sys.stdout.write(quotedName)
     sys.stdout.write(line)
