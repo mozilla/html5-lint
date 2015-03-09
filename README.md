@@ -33,6 +33,10 @@ fs.readFile( 'index.html', 'utf8', function( err, html ) {
 });
 ````
 
+##### gulp.js
+
+If you are using the [gulp.js build system](http://gulpjs.com/) you may wish to use the `gulp-html5-lint` plugin. Documentation is available at https://www.npmjs.com/package/gulp-html5-lint.
+
 Usage - Python
 -------
 
