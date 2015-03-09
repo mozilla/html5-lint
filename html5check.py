@@ -69,7 +69,7 @@ encoding = None
 fileName = None
 contentType = None
 inputHandle = None
-service = 'http://html5.validator.nu/'
+service = 'https://html5.validator.nu/'
 
 argv = sys.argv[1:]
 

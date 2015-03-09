@@ -32,7 +32,7 @@ const outputFormats = [
 const defaults = {
   errorsOnly: false, // level parameter
   output: "json", // out parameter
-  service: "http://html5.validator.nu/",
+  service: "https://html5.validator.nu/",
   showSource: false // showsource parameter
 };
 
