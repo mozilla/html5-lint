@@ -58,7 +58,7 @@ Options
 * -g : GNU output
 * -e : errors only (no info or warnings)
 * --encoding=foo : declare encoding foo
-* --service=url  : the address of the HTML5 validator (defautls to https://validator.mozillalabs.com/)
+* --service=url  : the address of the HTML5 validator (defaults to http://html5.validator.nu/)
 
 TODO
 --------
