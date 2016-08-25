@@ -59,7 +59,8 @@ var Lint = function Lint(input, options, callback) {
   var reqOptions = {
     body: input,
     headers: {
-      'Content-Type': 'text/html; charset=utf-8'
+      'Content-Type': 'text/html; charset=utf-8',
+      'User-Agent': 'html5-lint'
     },
     method: "post",
     uri: options.service,
