@@ -206,6 +206,7 @@ while status in (302,301,307) and redirectCount < 10:
     'Content-Type': contentType,
     'Content-Encoding': 'gzip',
     'Content-Length': len(gzippeddata),
+    'User-Agent': 'html5check',
   }
   urlSuffix = '%s?%s' % (parsed[2], parsed[3])
   
